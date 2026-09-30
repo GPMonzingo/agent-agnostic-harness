@@ -1,0 +1,22 @@
+{
+  "symbols": {
+    "Harness": {"file": "src/core/harness.ts", "type": "class", "exports": true, "methods": ["execute"]},
+    "HarnessRequest": {"file": "src/core/types.ts", "type": "interface", "exports": true},
+    "HarnessResponse": {"file": "src/core/types.ts", "type": "interface", "exports": true},
+    "ModelProvider": {"file": "src/core/provider.ts", "type": "interface", "exports": true, "methods": ["supports", "capabilities", "generate"]},
+    "ProviderRegistry": {"file": "src/core/provider.ts", "type": "class", "exports": true, "methods": ["register", "get"]},
+    "ModelRegistry": {"file": "src/core/registry.ts", "type": "class", "exports": true, "methods": ["register", "getModels", "getModel"]},
+    "DefaultPolicyEngine": {"file": "src/core/policy.ts", "type": "class", "exports": true, "methods": ["evaluate", "filter"]},
+    "RuleDecisionEngine": {"file": "src/core/decision.ts", "type": "class", "exports": true, "methods": ["decide"]},
+    "eligibleModels": {"file": "src/core/decision.ts", "type": "function", "exports": true},
+    "MemoryTelemetry": {"file": "src/core/telemetry.ts", "type": "class", "exports": true, "methods": ["record"]},
+    "estimateCost": {"file": "src/core/telemetry.ts", "type": "function", "exports": true},
+    "ToolRegistry": {"file": "src/core/tools.ts", "type": "class", "exports": true, "methods": ["register", "get"]},
+    "ToolExecutor": {"file": "src/core/tools.ts", "type": "class", "exports": true, "methods": ["execute"]},
+    "HttpLocalProvider": {"file": "src/providers/http-local.ts", "type": "class", "exports": true, "methods": ["supports", "capabilities", "generate"]},
+    "RepositoryIndex": {"file": "harness/indexer.py", "type": "class", "exports": true, "methods": ["scan", "save", "load"]},
+    "ContextBuilder": {"file": "harness/context.py", "type": "class", "exports": true, "methods": ["build"]},
+    "search_code": {"file": "harness/search.py", "type": "function", "exports": true},
+    "find_symbol": {"file": "harness/search.py", "type": "function", "exports": true}
+  }
+}

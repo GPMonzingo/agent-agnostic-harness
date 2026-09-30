@@ -1,0 +1,22 @@
+{
+  "providers": [
+    {
+      "name": "ollama",
+      "baseUrl": "http://127.0.0.1:11434",
+      "models": [
+        {
+          "id": "local-coding",
+          "providerModel": "replace-with-ollama-model-name",
+          "capabilities": {
+            "contextWindow": 32768,
+            "vision": false,
+            "tools": false,
+            "streaming": true,
+            "structuredOutput": false,
+            "local": true
+          }
+        }
+      ]
+    }
+  ]
+}

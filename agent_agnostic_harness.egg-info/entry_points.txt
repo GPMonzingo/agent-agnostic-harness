@@ -1,0 +1,2 @@
+[console_scripts]
+ai-harness = harness.cli:main

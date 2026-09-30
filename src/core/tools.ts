@@ -1,0 +1,4 @@
+export interface ToolContext { requestId: string; allowedTools: Set<string>; }
+export interface HarnessTool { name: string; description: string; inputSchema: object; execute(input: unknown, context: ToolContext): Promise<unknown>; }
+export class ToolRegistry { private readonly tools = new Map<string, HarnessTool>(); register(tool: HarnessTool): void { this.tools.set(tool.name, tool); } get(name: string): HarnessTool { const tool = this.tools.get(name); if (!tool) throw new Error(`Tool not registered: ${name}`); return tool; } }
+export class ToolExecutor { constructor(private readonly registry: ToolRegistry) {} execute(name: string, input: unknown, context: ToolContext): Promise<unknown> { if (!context.allowedTools.has(name)) return Promise.reject(new Error(`Tool not authorized: ${name}`)); return this.registry.get(name).execute(input, context); } }

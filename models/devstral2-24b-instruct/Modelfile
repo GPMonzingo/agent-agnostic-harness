@@ -1,0 +1,5 @@
+FROM ./devstral2-24b-instruct.gguf
+
+PARAMETER num_ctx 8192
+PARAMETER temperature 0.15
+PARAMETER top_p 0.9

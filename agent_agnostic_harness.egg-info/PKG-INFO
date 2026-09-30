@@ -1,0 +1,5 @@
+Metadata-Version: 2.4
+Name: agent-agnostic-harness
+Version: 0.1.0
+Summary: Local repository intelligence and model-agnostic coding harness
+Requires-Python: >=3.10

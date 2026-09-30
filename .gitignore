@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.pytest_cache/
+__pycache__/
+.ai/index.json
+config/local-models.json
+models/weights/
+models/**/*.gguf
+models/**/*.safetensors
+models/**/*.bin
+models/**/*.pt
+models/**/*.pth
+/node_modules
+/dist
+/harness/__pycache__

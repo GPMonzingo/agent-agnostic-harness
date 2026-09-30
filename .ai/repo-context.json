@@ -1,0 +1,12 @@
+{
+  "language": "TypeScript and Python",
+  "runtime": "Node.js ES2022 and Python 3.10+",
+  "framework": "None; library/core harness",
+  "database": null,
+  "testFramework": "pytest; Node test runner configured",
+  "architecture": "repository intelligence -> context builder; Harness -> policy -> capability filter -> decision engine -> provider adapter",
+  "entryPoints": ["src/index.ts", "src/core/harness.ts", "harness/cli.py"],
+  "importantDirectories": {"typescript": "src", "providers": "src/providers", "python_intelligence": "harness", "tests": "tests", "knowledge": ".ai"},
+  "modelIntegration": {"contract": "ModelProvider", "localAdapter": "src/providers/http-local.ts", "applicationCall": "Harness.execute(request)"},
+  "validation": ["npm run build", "python -m pytest", "docker compose config"]
+}

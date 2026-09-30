@@ -1,0 +1,15 @@
+{
+  "name": "agent-agnostic-harness",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "node --test dist/tests/**/*.test.js",
+    "ollama": "powershell -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\run-ollama-model.ps1",
+    "ollama:deepseek": "npm run ollama -- deepseek-coder-v2-lite-instruct-q4_k_m",
+    "ollama:granite": "npm run ollama -- granite4.2-3b-bf16",
+    "ollama:devstral": "npm run ollama -- devstral2-24b-instruct"
+  },
+  "devDependencies": { "typescript": "^5.7.0" }
+}
