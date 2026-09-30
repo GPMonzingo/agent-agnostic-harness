@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "node --test dist/tests/**/*.test.js",
+    "extension:deploy": "npm --prefix vscode-extension run compile && cd vscode-extension && npx --yes @vscode/vsce package --out ../agent-harness-chat.vsix && cd .. && code --install-extension agent-harness-chat.vsix --force",
     "ollama": "powershell -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\run-ollama-model.ps1",
     "ollama:deepseek": "npm run ollama -- deepseek-coder-v2-lite-instruct-q4_k_m",
     "ollama:granite": "npm run ollama -- granite4.2-3b-bf16",

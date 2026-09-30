@@ -12,4 +12,8 @@ models/**/*.pt
 models/**/*.pth
 /node_modules
 /dist
+.venv/
+vscode-extension/node_modules/
+vscode-extension/out/
 /harness/__pycache__
+/package-lock.json

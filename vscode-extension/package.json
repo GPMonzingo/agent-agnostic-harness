@@ -1,0 +1,68 @@
+{
+  "name": "agent-harness-chat",
+  "displayName": "Agent Harness Chat",
+  "description": "Local repository chat powered by Ollama.",
+  "version": "2.1.0",
+  "publisher": "gpmonzingo",
+  "icon": "media/VCV_LOGO.png",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onView:agentHarness.chatView",
+    "onCommand:agentHarness.openChat"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "agentHarness.openChat",
+        "title": "Agent Harness: Open Chat"
+      }
+    ],
+    "configuration": {
+      "title": "Agent Harness",
+      "properties": {
+        "agentHarness.ollamaUrl": {
+          "type": "string",
+          "default": "http://127.0.0.1:11434",
+          "description": "Ollama server URL."
+        },
+        "agentHarness.model": {
+          "type": "string",
+          "default": "deepseek-coder-v2-lite-instruct-q4_k_m",
+          "description": "Ollama model used by the chat."
+        }
+      }
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "agentHarness",
+          "title": "Agent Harness",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "agentHarness": [
+        {
+          "id": "agentHarness.chatView",
+          "name": "Chat",
+          "type": "webview"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p .",
+    "watch": "tsc -p . -w"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.7.0"
+  }
+}
