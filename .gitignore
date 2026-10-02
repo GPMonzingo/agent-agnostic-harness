@@ -17,3 +17,10 @@ vscode-extension/node_modules/
 vscode-extension/out/
 /harness/__pycache__
 /package-lock.json
+
+office/events.jsonl
+/office-preview.png
+/office-exterior.png
+/.ai/codex-protocol/
+/office/.runtime/
+/.env

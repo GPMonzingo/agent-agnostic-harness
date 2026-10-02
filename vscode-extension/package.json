@@ -2,7 +2,7 @@
   "name": "agent-harness-chat",
   "displayName": "Agent Harness Chat",
   "description": "Local repository chat powered by Ollama.",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "publisher": "gpmonzingo",
   "icon": "media/VCV_LOGO.png",
   "engines": {

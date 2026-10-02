@@ -1,0 +1,193 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Oracle Aconex M365 Agent Integration Gateway",
+    "description": "Custom API Gateway wrapper connecting Microsoft 365 Copilot Agents securely to the Oracle Aconex Document Registry via dynamic user delegation.",
+    "version": "1.0.0"
+  },
+  "host": "YOUR_PRODUCTION_SERVER_DOMAIN.com",
+  "basePath": "/api/v1/aconex",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/projects/{projectId}/documents": {
+      "get": {
+        "summary": "Retrieve project documents from Aconex register",
+        "description": "Searches, filters, and retrieves a list of files, blueprints, or documents from a specific Aconex project instance using project ID and optional keywords.",
+        "operationId": "GetAconexDocuments",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The unique internal alphanumeric identifier of the target Aconex project."
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Optional keyword string or document designation sequence to filter search results by title or document number."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved document matching parameters.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "count": { "type": "integer" },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/AconexDocument"
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized access or invalid token." },
+          "500": { "description": "Internal server gateway error processing request." }
+        }
+      },
+      "post": {
+        "summary": "Upload and register a new document to Aconex",
+        "description": "Uploads and registers a new physical drawing, blueprint, or document archive directly into the assigned Aconex project document library register.",
+        "operationId": "PushAconexDocument",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The unique structural project ID identifier where the document should be uploaded."
+          },
+          {
+            "name": "file",
+            "in": "formData",
+            "required": true,
+            "type": "file",
+            "description": "The binary file payload attachment pulled directly from the Microsoft 365 canvas app environment."
+          },
+          {
+            "name": "docNo",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": "The strict official index configuration tracking number assigned to this piece of documentation."
+          },
+          {
+            "name": "title",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": "The readable plain text descriptive heading mapping to this document asset."
+          },
+          {
+            "name": "revision",
+            "in": "formData",
+            "required": false,
+            "type": "string",
+            "description": "The specific change variation identifier tracking context (e.g., A, B, 1, 2). Defaults to '1'."
+          },
+          {
+            "name": "discipline",
+            "in": "formData",
+            "required": false,
+            "type": "string",
+            "description": "The engineering division categorization context (e.g., Mechanical, Architectural, Civil)."
+          },
+          {
+            "name": "status",
+            "in": "formData",
+            "required": false,
+            "type": "string",
+            "description": "The document workflow authorization phase setting (e.g., For Approval, Issued For Construction)."
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Document successful upload configuration response framework.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "message": { "type": "string" },
+                "data": {
+                  "$ref": "#/definitions/AconexDocument"
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad Request. File or mandatory parameter parameters array configuration array missing." },
+          "401": { "description": "Unauthorized. Expired or dropped M365 delegated credential context user session." }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "AconexDocument": {
+      "type": "object",
+      "properties": {
+        "documentId": {
+          "type": "string",
+          "description": "The structural target primary cloud key matching this precise record entry reference."
+        },
+        "documentNo": {
+          "type": "string",
+          "description": "The formal cataloging string number structure associated with the construction file track."
+        },
+        "title": {
+          "type": "string",
+          "description": "The explicit title context sequence assigned to the entity."
+        },
+        "revision": {
+          "type": "string",
+          "description": "The specific document version revision tracker notation layer."
+        },
+        "discipline": {
+          "type": "string",
+          "description": "Field sector categorization context tracking classification indices."
+        },
+        "status": {
+          "type": "string",
+          "description": "Life-cycle workflow position context assignment value strings."
+        },
+        "uploadDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 standardized generation context tracking timestamp tracking initialization parameters."
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "oauth2": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://YOUR_PRODUCTION_SERVER_://domain.com",
+      "tokenUrl": "https://YOUR_PRODUCTION_SERVER_://domain.com",
+      "scopes": {
+        "urn:aconex:identity:user:read": "Read basic identity details matching user assignment contexts.",
+        "urn:aconex:document:registry:write": "Authorize access to upload data modifications."
+      }
+    }
+  },
+  "security": [
+    {
+      "oauth2": []
+    }
+  ]
+}

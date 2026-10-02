@@ -1,0 +1,22 @@
+import * as THREE from '/vendor/three.module.js';
+export function createExterior(host){
+ const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.3;host.append(renderer.domElement);
+ const scene=new THREE.Scene();scene.background=new THREE.Color('#b5c8c8');scene.fog=new THREE.Fog('#b5c8c8',55,140);const camera=new THREE.PerspectiveCamera(38,1,.1,200);
+ scene.add(new THREE.HemisphereLight('#d6f2ff','#5d674e',2.3));const sun=new THREE.DirectionalLight('#fff0d2',4.2);sun.position.set(-18,35,20);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-35,right:35,top:35,bottom:-35,near:1,far:100});sun.shadow.bias=-.0002;scene.add(sun);
+ const stone=new THREE.MeshStandardMaterial({color:'#c4c7b7',roughness:.5});const dark=new THREE.MeshStandardMaterial({color:'#243b37',metalness:.65,roughness:.3});const glass=new THREE.MeshPhysicalMaterial({color:'#8ac4c4',metalness:.15,roughness:.12,transmission:.25,transparent:true,opacity:.43,side:THREE.DoubleSide});const wood=new THREE.MeshStandardMaterial({color:'#8c7251',roughness:.55});
+ function block(x,y,z,w,h,d,mat){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;scene.add(m);return m}
+ const ground=new THREE.MeshStandardMaterial({color:'#64755f',roughness:.95});block(0,-.4,0,140,.5,140,ground);block(0,-.08,0,39,.2,29,stone);
+ for(let f=0;f<3;f++){const y=f*3.7;block(0,y,0,30,.32,18,stone);block(0,y+3.65,0,30.5,.23,18.5,stone);block(0,y+1.85,9,30,3.4,.1,glass);block(0,y+1.85,-9,30,3.4,.1,glass);block(15,y+1.85,0,.1,3.4,18,glass);block(-15,y+1.85,0,.1,3.4,18,glass);
+ for(let x=-15;x<=15;x+=1.5){block(x,y+1.85,9,.07,3.4,.15,dark);block(x,y+1.85,-9,.07,3.4,.15,dark)}for(let z=-9;z<=9;z+=1.5){block(15,y+1.85,z,.15,3.4,.07,dark);block(-15,y+1.85,z,.15,3.4,.07,dark)}
+ // Same six-room footprint and central lift as the bird's-eye plan.
+ const rooms=[[80,90,470,290],[820,90,490,290],[80,470,280,300],[390,470,250,300],[760,470,250,300],[1040,470,270,300]];
+ for(const [i,[rx,rz,rw,rd]]of rooms.entries()){const x=(rx+rw/2-700)/42,z=(rz+rd/2-430)/40,w=rw/42,d=rd/40;block(x,y+.18,z,w,.06,d,new THREE.MeshStandardMaterial({color:['#526e5e','#587077','#8b7d5c','#647a70','#567054','#7c7062'][i]}));block(x-w/2,y+1.35,z,.09,2.5,d,glass);block(x+w/2,y+1.35,z,.09,2.5,d,glass);for(let j=0;j<2;j++){block(x-1+j*2,y+.9,z,1.4,.13,.75,wood);block(x-1+j*2,y+1.2,z-.15,.7,.45,.08,dark);block(x-1+j*2,y+.45,z+.6,.55,.8,.55,dark)}}
+ block(0,y+1.7,0,2.2,3.4,2.2,dark);block(0,y+1.7,1.12,1.6,2.8,.05,stone);
+ const light=new THREE.PointLight('#f2dfad',35,18,2);light.position.set(0,y+2.9,2);scene.add(light);
+ }
+ block(0,11.3,0,30.8,.35,18.8,stone);block(0,11.55,0,27,.12,15,ground);const solar=new THREE.MeshStandardMaterial({color:'#173d54',metalness:.8,roughness:.2});for(let x=-9;x<=9;x+=3)for(let z=-4;z<=4;z+=3)block(x,11.8,z,2.5,.15,2,solar);
+ function tree(x,z){block(x,1,z,.25,2,.25,wood);for(let i=0;i<3;i++){const crown=new THREE.Mesh(new THREE.IcosahedronGeometry(1.2+i*.1,2),new THREE.MeshStandardMaterial({color:['#406548','#587a51','#6f8e62'][i],roughness:.9}));crown.position.set(x+(i-1)*.5,2.6+i*.45,z);crown.castShadow=true;scene.add(crown)}}for(let x=-20;x<=20;x+=5){tree(x,-15);if(Math.abs(x)>5)tree(x,16)}for(let z=-8;z<12;z+=5){tree(-20,z);tree(20,z)}
+ for(let z=12;z<29;z+=2)block(0,-.02,z,5,.12,1.7,stone);for(let x=-13;x<=13;x+=6){block(x,.35,12,3,.4,.8,wood);block(x,.12,12,2,.3,.5,dark)}
+ let angle=.65,height=24,distance=43,drag=false,lastX=0;host.onpointerdown=e=>{drag=true;lastX=e.clientX;host.setPointerCapture(e.pointerId)};host.onpointerup=()=>drag=false;host.onpointermove=e=>{if(drag){angle-=(e.clientX-lastX)*.008;lastX=e.clientX}};host.onwheel=e=>{e.preventDefault();distance=Math.max(26,Math.min(75,distance+e.deltaY*.02))};
+ let active=true;function frame(){if(!active)return;if(!host.hidden){const w=host.clientWidth,h=host.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.position.set(Math.sin(angle)*distance,height,Math.cos(angle)*distance);camera.lookAt(0,4,0);camera.updateProjectionMatrix();renderer.render(scene,camera)}requestAnimationFrame(frame)}frame();return ()=>{active=false;renderer.dispose()};
+}

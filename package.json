@@ -10,7 +10,22 @@
     "ollama": "powershell -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\run-ollama-model.ps1",
     "ollama:deepseek": "npm run ollama -- deepseek-coder-v2-lite-instruct-q4_k_m",
     "ollama:granite": "npm run ollama -- granite4.2-3b-bf16",
-    "ollama:devstral": "npm run ollama -- devstral2-24b-instruct"
+    "ollama:devstral": "npm run ollama -- devstral2-24b-instruct",
+    "learn:crawl": "node scripts/learn-crawl.mjs",
+    "office": "node office/server.mjs",
+    "office:test": "node --test office/*.test.mjs",
+    "extension:package": "npm --prefix vscode-extension run compile && cd vscode-extension && npx --yes @vscode/vsce package --allow-missing-repository --out ../agent-harness-chat-2.2.0.vsix"
   },
-  "devDependencies": { "typescript": "^5.7.0" }
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/multer": "^2.3.0",
+    "typescript": "^5.7.0"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.5",
+    "express": "^5.2.1",
+    "multer": "^2.4.0",
+    "pdf-lib": "^1.17.1",
+    "three": "^0.186.1"
+  }
 }

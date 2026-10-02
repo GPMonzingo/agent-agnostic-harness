@@ -1,65 +1,32 @@
 param(
-    [Parameter(Mandatory = $true, Position = 0)]
-    [string]$Model
+ [Parameter(Mandatory=$true, Position=0)][string]$Model,
+ [switch]$WebUI,
+ [switch]$CheckOnly
 )
-
-$ErrorActionPreference = "Stop"
-
-function Wait-Until([scriptblock]$Check, [string]$Description, [int]$Attempts = 30) {
-    for ($i = 0; $i -lt $Attempts; $i++) {
-        if (& $Check) { return }
-        Start-Sleep -Seconds 2
-    }
-    throw "$Description did not become ready in time."
+$ErrorActionPreference = 'Stop'
+$base = 'http://127.0.0.1:11434'
+try { $tags = Invoke-RestMethod "$base/api/tags" -TimeoutSec 3 } catch {
+ $exe = (Get-Command ollama -ErrorAction Stop).Source
+ Start-Process -FilePath $exe -ArgumentList 'serve' -WindowStyle Hidden
+ for ($attempt=0; $attempt -lt 30; $attempt++) {
+  Start-Sleep -Seconds 2
+  try { $tags = Invoke-RestMethod "$base/api/tags" -TimeoutSec 2; break } catch {}
+ }
+ if (-not $tags) { throw 'Ollama did not start on port 11434.' }
 }
-
-$repoRoot = Split-Path -Parent $PSScriptRoot
-Set-Location $repoRoot
-
-if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
-    throw "Docker was not found on PATH. Install Docker Desktop or add Docker to PATH."
+$name = if ($Model.Contains(':')) { $Model } else { "${Model}:latest" }
+if ($name -notin $tags.models.name) { throw "Model $name is not installed. Import its Modelfile with ollama create, or install a valid registry model first." }
+Write-Host "Ollama is ready. Model: $name"
+if ($CheckOnly) { exit 0 }
+Write-Host 'Loading model (first load may take several minutes)...'
+$body = @{model=$name; stream=$false; keep_alive='30m'} | ConvertTo-Json
+Invoke-RestMethod "$base/api/generate" -Method Post -ContentType 'application/json' -Body $body -TimeoutSec 600 | Out-Null
+Write-Host "Model loaded. Select $Model in Agent Harness Chat settings."
+if ($WebUI) {
+ Push-Location (Split-Path -Parent $PSScriptRoot)
+ try {
+  docker compose up -d open-webui
+  if ($LASTEXITCODE -ne 0) { throw 'Open WebUI failed to start. Check Docker Desktop.' }
+  Start-Process 'http://localhost:3000'
+ } finally { Pop-Location }
 }
-
-if (-not (docker info 2>$null)) {
-    $dockerDesktop = Get-Command "C:\Program Files\Docker\Docker\Docker Desktop.exe" -ErrorAction SilentlyContinue
-    if (-not $dockerDesktop) {
-        throw "Docker Desktop is not running and its executable was not found."
-    }
-    Write-Host "Starting Docker Desktop..."
-    Start-Process $dockerDesktop.Source | Out-Null
-    Wait-Until { docker info 2>$null } "Docker Desktop"
-}
-
-Write-Host "Starting Open WebUI..."
-docker compose up -d open-webui
-Wait-Until {
-    try {
-        (Invoke-WebRequest -Uri "http://localhost:3000" -UseBasicParsing -TimeoutSec 2).StatusCode -eq 200
-    } catch {
-        $false
-    }
-} "Open WebUI"
-Write-Host "Opening Open WebUI in the default browser..."
-Start-Process "http://localhost:3000"
-
-if (-not (Get-Command ollama -ErrorAction SilentlyContinue)) {
-    throw "Ollama was not found on PATH. Install Ollama or add it to PATH."
-}
-
-if (-not (ollama list 2>$null)) {
-    Write-Host "Starting Ollama..."
-    Start-Process ollama -ArgumentList "serve" -WindowStyle Hidden | Out-Null
-    Wait-Until { ollama list 2>$null } "Ollama"
-}
-
-$loadedModels = ollama ps | Select-Object -Skip 1 | ForEach-Object {
-    if ($_ -match '^\s*(\S+)\s+') { $Matches[1] }
-} | Where-Object { $_ -and $_ -ne "NAME" }
-
-foreach ($loadedModel in $loadedModels) {
-    Write-Host "Stopping loaded model: $loadedModel"
-    ollama stop $loadedModel
-}
-
-Write-Host "Starting model: $Model"
-ollama run $Model

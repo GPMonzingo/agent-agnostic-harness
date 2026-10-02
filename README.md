@@ -45,3 +45,7 @@ ollama run $model
 ```
 
 Replace `$model` when switching models. `ollama ps` should show only the selected model after it starts.
+
+## Browser office and chat extension
+
+Run the office npm script and open http://127.0.0.1:4310. The extension is chat-only. See [office setup and Codex integration](office/README.md) for installation, customization and connection limits.
